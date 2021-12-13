@@ -75,11 +75,12 @@ from sklearn.tree import DecisionTreeRegressor
 
 activity_data = pd.read_csv("data/activity_data.csv")
 
-feature_cols = ['Acceleration_X', 'Acceleration_Y', 'Acceleration_Z', 'BPM']
+# feature_cols = ['Acceleration_X', 'Acceleration_Y', 'Acceleration_Z', 'BPM']
+feature_cols = ['BPM']
 target_col = ['Activity']
 
-X = activity_data[feature_cols] # Features
-y = activity_data[target_col] # Target variable
+X = activity_data[feature_cols] 
+y = activity_data[target_col] 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) 
 
@@ -91,9 +92,5 @@ y_pred = clf.predict(X_test)
 
 print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 
-
-# regr = DecisionTreeRegressor(max_depth=3, random_state=1234)
-# model = regr.fit(X, y)
-
-# fig = plt.figure(figsize=(25,20))
-# _ = tree.plot_tree(regr, feature_names=feature_cols, filled=True)
+tree.plot_tree(clf)
+plt.show()
