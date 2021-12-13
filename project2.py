@@ -1,17 +1,20 @@
-import matplotlib
+import os
+
 from matplotlib import cm
 import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
-from scipy.signal import butter, filtfilt, find_peaks, iirnotch
+import joblib
 
-matplotlib.style.use('ggplot')
+# matplotlib.style.use('ggplot')
 
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier 
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import ParameterGrid, GridSearchCV
 from sklearn.model_selection import train_test_split 
 from sklearn import metrics
 from sklearn import tree
+from sklearn.metrics import make_scorer, accuracy_score, classification_report
 from sklearn.tree import DecisionTreeRegressor
 
 
@@ -64,7 +67,32 @@ clf = clf.fit(X_train,y_train)
 
 y_pred = clf.predict(X_test)
 
-print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-
 tree.plot_tree(clf)
 plt.show()
+
+# –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+ccp_alphas = clf.cost_complexity_pruning_path(X_train, y_train)["ccp_alphas"]
+
+# print(ccp_alphas)
+
+ccp_alpha_grid_search = GridSearchCV(
+    estimator=DecisionTreeClassifier(random_state=42),
+    scoring=make_scorer(accuracy_score),
+    param_grid=ParameterGrid({"ccp_alpha": [[alpha] for alpha in ccp_alphas]}),
+)
+
+ccp_alpha_grid_search.fit(X_train, y_train)
+
+# print(ccp_alpha_grid_search.best_params_)
+
+best_ccp_alpha_tree = ccp_alpha_grid_search.best_estimator_
+
+print(classification_report(y_test, clf.predict(X_test)))
+print(classification_report(y_test, best_ccp_alpha_tree.predict(X_test)))
+
+
+tree.plot_tree(best_ccp_alpha_tree)
+plt.show()
+
+print(best_ccp_alpha_tree.get_depth())
