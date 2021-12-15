@@ -6,8 +6,6 @@ import pylab as pl
 import matplotlib.pyplot as plt
 import joblib
 
-# matplotlib.style.use('ggplot')
-
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import ParameterGrid, GridSearchCV
@@ -40,6 +38,7 @@ from sklearn.tree import DecisionTreeRegressor
 # plt.show()
 
 # mike_walk = pd.read_csv("data2/mike_walk.csv")
+# # mike_walk["Magnitude"] = np.sqrt(mike_walk["Acceleration X (g)"]**2 + mike_walk["Acceleration Y (g)"]**2 + mike_walk["Acceleration Z (g)"]**2)
 # plt.plot(mike_walk["Sample Count"],mike_walk["Heart Rate (bpm)"])
 # plt.title('Mike Walk')
 # plt.xlabel('Time')
@@ -51,10 +50,13 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 activity_data = pd.read_csv("data2/activity_data2.csv")
+activity_data["Magnitude"] = np.sqrt(activity_data["Acceleration X (g)"]**2 + activity_data["Acceleration Y (g)"]**2 + activity_data["Acceleration Z (g)"]**2)
 
-feature_cols = ['Acceleration X (g)', 'Acceleration Y (g)', 'Acceleration Z (g)']
-# feature_cols = ["Heart Rate (bpm)"]
+# feature_cols = ['Acceleration X (g)', 'Acceleration Y (g)', 'Acceleration Z (g)',"Heart Rate (bpm)"]
+feature_cols = ['Magnitude']
+#feature_cols = ["Heart Rate (bpm)"]
 target_col = ['Activity']
+
 
 X = activity_data[feature_cols] 
 y = activity_data[target_col] 
@@ -67,8 +69,9 @@ clf = clf.fit(X_train,y_train)
 
 y_pred = clf.predict(X_test)
 
-tree.plot_tree(clf)
-plt.show()
+# tree.plot_tree(clf)
+# plt.show()
+
 
 # –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
@@ -92,7 +95,7 @@ print(classification_report(y_test, clf.predict(X_test)))
 print(classification_report(y_test, best_ccp_alpha_tree.predict(X_test)))
 
 
-tree.plot_tree(best_ccp_alpha_tree)
-plt.show()
+# tree.plot_tree(best_ccp_alpha_tree)
+# plt.show()
 
-print(best_ccp_alpha_tree.get_depth())
+
