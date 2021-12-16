@@ -63,31 +63,20 @@ y = activity_data[target_col]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) 
 
-clf = DecisionTreeClassifier()
+tree = DecisionTreeClassifier()
 
-clf = clf.fit(X_train,y_train)
+tree = tree.fit(X_train,y_train)
 
-y_pred = clf.predict(X_test)
+y_pred = tree.predict(X_test)
 
-# tree.plot_tree(clf)
+# tree.plot_tree(tree)
 # plt.show()
 
 
-
-
-plt.figure(figsize=(4, 3))
-plt.scatter(X_test , y_pred)
-# plt.plot([0, 50], [0, 50], '--k')
-plt.axis('tight')
-plt.xlabel('True price ($1000s)')
-plt.ylabel('Predicted price ($1000s)')
-plt.tight_layout()
-plt.show()
 # –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# Post Pruning using the Cost Complexity Paramter
 
-ccp_alphas = clf.cost_complexity_pruning_path(X_train, y_train)["ccp_alphas"]
-
-# print(ccp_alphas)
+ccp_alphas = tree.cost_complexity_pruning_path(X_train, y_train)["ccp_alphas"]
 
 ccp_alpha_grid_search = GridSearchCV(
     estimator=DecisionTreeClassifier(random_state=42),
@@ -97,13 +86,11 @@ ccp_alpha_grid_search = GridSearchCV(
 
 ccp_alpha_grid_search.fit(X_train, y_train)
 
-# print(ccp_alpha_grid_search.best_params_)
 
 best_ccp_alpha_tree = ccp_alpha_grid_search.best_estimator_
 
-print(classification_report(y_test, clf.predict(X_test)))
+print(classification_report(y_test, tree.predict(X_test)))
 print(classification_report(y_test, best_ccp_alpha_tree.predict(X_test)))
-
 
 # tree.plot_tree(best_ccp_alpha_tree)
 # plt.show()
